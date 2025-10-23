@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Recipes Multi-Step</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 15px;
+  }
+
+  .container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 15px;
+    max-width: 600px;
+    width: 100%;
+    padding: 25px 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  header {
+    text-align: center;
+    font-size: 2.4em;
+    font-weight: 700;
+    color: #ff6347;
+    margin-bottom: 30px;
+  }
+
+  .screen {
+    display: none;
+  }
+  .screen.active {
+    display: block;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1em;
+    border: 2px solid #ff6347;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    outline-offset: 2px;
+    transition: border-color 0.3s;
+  }
+  input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+    border-color: #e94e33;
+  }
+
+  button {
+    background-color: #ff6347;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    font-size: 1.15em;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #e94e33;
+  }
+
+  /* Ingredients selection styling */
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .items label {
+    background: #fff5f3;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid #ffb8a5;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    user-select: none;
+  }
+  .items label:hover {
+    background: #ffe0d6;
+  }
+  input[type="checkbox"] {
+    accent-color: #ff6347;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+
+  /* Recipe output */
+  #output {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff8f6;
+    border: 2px solid #ff6347;
+    border-radius: 10px;
+  }
+  #output h3 {
+    margin-top: 0;
+    color: #d84315;
+  }
+  ol {
+    padding-left: 20px;
+  }
+  .extra {
+    background: #fff2ef;
+    border-left: 5px solid #ff6347;
+    padding: 10px 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+  }
+
+  /* Small helper text */
+  .helper-text {
+    font-size: 0.9em;
+    color: #555;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>🍽️ Smart Recipes</header>
+
+  <!-- Step 1: Login Screen -->
+  <div id="screen1" class="screen active">
+    <h2>🔐 Login to Continue</h2>
+    <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
+      <label for="name">Name <span style="color:#ff6347">*</span></label>
+      <input type="text" id="name" placeholder="Your name" required />
+
+      <label for="email">Email <span style="color:#ff6347">*</span></label>
+      <input type="email" id="email" placeholder="example@mail.com" required />
+      <div class="helper-text">We'll never share your email.</div>
+
+      <label for="password">Password <span style="color:#ff6347">*</span></label>
+      <input type="password" id="password" placeholder="Enter your password" required />
+
+      <button type="submit">Login & Continue</button>
+    </form>
+  </div>
+
+  <!-- Step 2: Ingredient Selection -->
+  <div id="screen2" class="screen">
+    <h2>🧺 Select Ingredients</h2>
+    <p><strong>Welcome, <span id="userNameDisplay"></span>! Please select your ingredients:</strong></p>
+    <div class="items" id="ingredient-list"></div>
+    <button onclick="goToCookingSelection()">Next: Choose Cooking Ingredients</button>
+  </div>
+
+  <!-- Step 3: Cooking Selection & Recipe Display -->
+  <div id="screen3" class="screen">
+    <h2>👩‍🍳 Choose Ingredients for Cooking</h2>
+    <p><strong><span id="userNameDisplay2"></span>, select the ingredients you want to cook with:</strong></p>
+    <div class="items" id="final-selection"></div>
+    <button onclick="makeRecipe()">Make Recipe</button>
+
+    <div id="output" style="display:none;">
+      <h3>Your Custom Recipe 🍴</h3>
+      <p id="recipeText"></p>
+
+      <h3>👩‍🍳 How to Make It:</h3>
+      <ol id="processSteps"></ol>
+
+      <div id="extraRecipe" class="extra"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Ingredient list (A–Z)
+  const ingredients = [
+    "Beef", "Broccoli", "Butter", "Cabbage", "Capsicum", "Carrot", "Cauliflower", 
+    "Cheese", "Chicken", "Chili", "Coconut", "Coriander", "Corn", "Cucumber", 
+    "Egg", "Fish", "Garlic", "Ginger", "Lemon", "Mushroom", "Mutton", "Onion", 
+    "Paneer", "Peas", "Potato", "Prawns", "Rice", "Salt", "Spinach", "Tomato", 
+    "Turmeric", "Yogurt"
+  ].sort();
+
+  // Suggested extra recipes
+  const extraRecipeSuggestions = {
+    Chicken: "Try <b>Butter Chicken</b> or <b>Chicken Biryani</b> next time!",
+    Fish: "How about a <b>Fish Fry</b> or <b>Fish Curry</b> for your next meal?",
+    Paneer: "You might also enjoy <b>Paneer Butter Masala</b> or <b>Chilli Paneer</b>!",
+    Egg: "Try making <b>Egg Curry</b> or <b>Egg Fried Rice</b>!",
+    Mutton: "Cook <b>Mutton Rogan Josh</b> or <b>Mutton Keema</b> next time!",
+    Potato: "Try <b>Aloo Gobi</b> or <b>Masala Fries</b>!",
+    Mushroom: "Try <b>Mushroom Masala</b> or <b>Stuffed Mushrooms</b>!",
+    Rice: "Pair it with <b>Veg Fried Rice</b> or <b>Chicken Pulao</b>!"
+  };
+
+  // Unique process steps for each major recipe
+  const recipeProcesses = {
+    Chicken: [
+      "Marinate chicken with yogurt, chili powder, turmeric, and salt for 30 minutes.",
+      "Heat oil in a pan, add onions, ginger, and garlic paste, and sauté till golden.",
+      "Add marinated chicken and cook for 10 minutes.",
+      "Add tomato puree and spices, then simmer for 15 minutes.",
+      "Finish with cream and coriander, serve hot with rice or roti."
+    ],
+    Fish: [
+      "Clean and marinate fish with turmeric, salt, and lemon juice for 15 minutes.",
+      "Heat oil in a pan and shallow fry the fish until golden brown.",
+      "In another pan, sauté onions, tomato, garlic, and chili.",
+      "Add coconut milk and cook the sauce for 10 minutes.",
+      "Add fried fish to the sauce and simmer gently for 5 minutes."
+    ],
+    Paneer: [
+      "Cut paneer into cubes and fry lightly till golden.",
+      "In a pan, heat butter, add chopped onions and tomatoes, cook till soft.",
+      "Add garlic, ginger, chili powder, and garam masala.",
+      "Blend mixture into a smooth sauce, then add paneer cubes.",
+      "Cook for 5–7 minutes and garnish with cream and coriander."
+    ],
+    Egg: [
+      "Boil eggs for 10 minutes and peel them.",
+      "Heat oil in a pan, add onions, ginger, garlic, and spices.",
+      "Add tomato puree and cook for 5 minutes.",
+      "Add boiled eggs and mix gently.",
+      "Cook for another 5 minutes and garnish with coriander."
+    ],
+    Mutton: [
+      "Marinate mutton with yogurt, ginger-garlic paste, and spices for 1 hour.",
+      "Heat oil in a pressure cooker, add onions, and sauté till brown.",
+      "Add marinated mutton and cook until sealed.",
+      "Add water and cook for 4–5 whistles.",
+      "Simmer until tender and serve with rice or naan."
+    ],
+    Veg: [
+      "Chop all vegetables evenly.",
+      "Heat oil in a pan and add garlic, onion, and chili.",
+      "Add all vegetables, salt, and pepper, sauté for 5–7 minutes.",
+      "Add a splash of soy sauce or spices for flavor.",
+      "Cook until soft and serve warm with rice or chapati."
+    ]
+  };
+
+  // Global user variables
+  let userName = "";
+  let userEmail = "";
+  let selectedIngredients = [];
+
+  // Step 1: Login validation and move to Step 2
+  function loginUser() {
+    const nameInput = document.getElementById("name").value.trim();
+    const emailInput = document.getElementById("email").value.trim();
+    const passInput = document.getElementById("password").value.trim();
+
+    if (!nameInput || !emailInput || !passInput) {
+      alert("Please fill in all the fields.");
+      return;
+    }
+
+    // Simple email format check
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(emailInput)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    // For demo, we don't verify password strength or server auth
+
+    userName = nameInput;
+    userEmail = emailInput;
+
+    document.getElementById("userNameDisplay").innerText = userName;
+    document.getElementById("userNameDisplay2").innerText = userName;
+
+    // Populate ingredient list
+    const ingredientList = document.getElementById("ingredient-list");
+    ingredientList.innerHTML = "";
+    ingredients.forEach(item => {
+      const label = document.createElement("label");
+      label.innerHTML = `<input type="checkbox" value="${item}"> ${item}`;
+      ingredientList.appendChild(label);
+    });
+
+    // Switch screens
+    document.getElementById("screen1").classList.remove("active");
+    document.getElementById("screen2").classList.add("active");
+  }
+
+  // Step 2 to Step 3: Collect selected ingredients from step 2
+  function goToCookingSelection() {
+    const checked = document.querySelectorAll('#ingredient-list input:checked');
+    if (checked.length === 0) {
+      alert("Please select at least one ingredient.");
+      return;
+    }
+    selectedIngredients = Array.from(checked).map(cb => cb.value);
+
+    // Show these ingredients for final cooking selection
+    const finalContainer = document.getElementById("final-selection");
+    finalContainer.innerHTML = "";
+    selectedIngredients.forEach(item => {
+      const label = document.createElement("label");
+      label.innerHTML = `<input type="checkbox" value="${item}" checked> ${item}`;
+      finalContainer.appendChild(label);
+    });
+
+    // Switch screens
+    document.getElementById("screen2").classList.remove("active");
+    document.getElementById("screen3").classList.add("active");
+  }
+
+  // Step 3: Generate recipe based on selected cooking ingredients
+  function makeRecipe() {
+    const checked = document.querySelectorAll('#final-selection input:checked');
+    const cookingItems = Array.from(checked).map(cb => cb.value);
+    if (cookingItems.length === 0) {
+      alert("Please select at least one ingredient to cook with.");
+      return;
+    }
+
+    const output = document.getElementById("output");
+    const recipeText = document.getElementById("recipeText");
+    const processSteps = document.getElementById("processSteps");
+    const extraRecipe = document.getElementById("extraRecipe");
+
+    // Determine main ingredient or default to Veg
+    const mainIngredient = cookingItems.find(i =>
+      ["Chicken", "Fish", "Paneer", "Egg", "Mutton"].includes(i)
+    ) || "Veg";
+
+    const nameMap = {
+      Chicken: "Chicken Masala Delight",
+      Fish: "Fish Curry Special",
+      Paneer: "Paneer Butter Treat",
+      Egg: "Egg Curry Magic",
+      Mutton: "Mutton Royal Feast",
+      Veg: "Veggie Mix Curry"
+    };
+
+    recipeText.innerHTML = `
+      <strong>${nameMap[mainIngredient]}</strong><br><br>
+      <b>Ingredients:</b> ${cookingItems.join(", ")}.
+    `;
+
+    const steps = recipeProcesses[mainIngredient];
+    processSteps.innerHTML = steps.map(s => `<li>${s}</li>`).join("");
+
+    const suggestion = extraRecipeSuggestions[mainIngredient]
+      ? `🍲 <b>Extra Recipe Suggestion:</b> ${extraRecipeSuggestions[mainIngredient]}`
+      : "🍴 Try experimenting with these ingredients for new flavors!";
+    extraRecipe.innerHTML = suggestion;
+
+    output.style.display = "block";
+    output.scrollIntoView({ behavior: "smooth" });
+  }
+</script>
+
+</body>
+</html>
