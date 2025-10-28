@@ -2,129 +2,129 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Smart Recipes Multi-Step</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Smart Recipes</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
-
   body {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     margin: 0;
     background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=80');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     color: #333;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 30px 15px;
-  }
-
-  .container {
-    background: rgba(255,255,255,0.95);
-    border-radius: 15px;
-    max-width: 600px;
-    width: 100%;
-    padding: 25px 30px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   }
 
   header {
+    background-color: rgba(255, 99, 71, 0.9);
+    color: white;
     text-align: center;
-    font-size: 2.4em;
-    font-weight: 700;
-    color: #ff6347;
-    margin-bottom: 30px;
+    padding: 25px;
+    font-size: 2em;
+    font-weight: bold;
+    letter-spacing: 2px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+    position: relative;
   }
 
-  .screen {
-    display: none;
+  .login-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background-color: white;
+    color: #ff6347;
+    border: none;
+    padding: 10px 18px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   }
-  .screen.active {
-    display: block;
+  .login-btn:hover {
+    background-color: #ffe0d6;
+    color: #e94e33;
+  }
+
+  main {
+    padding: 30px;
+    max-width: 950px;
+    margin: 40px auto;
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+
+  h2 {
+    color: #ff6347;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #ff6347;
+    display: inline-block;
+  }
+
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
   }
 
   label {
-    display: block;
-    margin-bottom: 12px;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff5f3;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid #ffb8a5;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
 
-  input[type="text"], input[type="email"], input[type="password"] {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 1em;
-    border: 2px solid #ff6347;
-    border-radius: 8px;
-    box-sizing: border-box;
-    margin-top: 6px;
-    outline-offset: 2px;
-    transition: border-color 0.3s;
+  label:hover {
+    background: #ffe0d6;
   }
-  input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
-    border-color: #e94e33;
+
+  input[type="checkbox"] {
+    accent-color: #ff6347;
   }
 
   button {
     background-color: #ff6347;
     color: white;
     border: none;
-    padding: 14px 28px;
-    font-size: 1.15em;
+    padding: 12px 24px;
+    font-size: 1.1em;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 700;
+    transition: 0.3s;
+    font-weight: bold;
     margin-top: 20px;
-    width: 100%;
-    transition: background-color 0.3s;
   }
+
   button:hover {
     background-color: #e94e33;
   }
 
-  /* Ingredients selection styling */
-  .items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 12px;
-  }
-  .items label {
-    background: #fff5f3;
-    padding: 8px 14px;
-    border-radius: 20px;
-    border: 1px solid #ffb8a5;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    user-select: none;
-  }
-  .items label:hover {
-    background: #ffe0d6;
-  }
-  input[type="checkbox"] {
-    accent-color: #ff6347;
-    margin-right: 8px;
-    cursor: pointer;
-  }
-
-  /* Recipe output */
   #output {
-    margin-top: 30px;
+    margin-top: 25px;
     padding: 20px;
     background: #fff8f6;
     border: 2px solid #ff6347;
     border-radius: 10px;
+    display: none;
   }
+
   #output h3 {
     margin-top: 0;
     color: #d84315;
   }
+
   ol {
     padding-left: 20px;
   }
+
   .extra {
     background: #fff2ef;
     border-left: 5px solid #ff6347;
@@ -132,67 +132,37 @@
     margin-top: 15px;
     border-radius: 8px;
   }
-
-  /* Small helper text */
-  .helper-text {
-    font-size: 0.9em;
-    color: #555;
-    margin-top: 6px;
-  }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <header>🍽️ Smart Recipes</header>
+<header>
+  🍽️ Smart Recipes
+  <button class="login-btn" onclick="location.href='login.html'">Login</button>
+</header>
 
-  <!-- Step 1: Login Screen -->
-  <div id="screen1" class="screen active">
-    <h2>🔐 Login to Continue</h2>
-    <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
-      <label for="name">Name <span style="color:#ff6347">*</span></label>
-      <input type="text" id="name" placeholder="Your name" required />
-
-      <label for="email">Email <span style="color:#ff6347">*</span></label>
-      <input type="email" id="email" placeholder="example@mail.com" required />
-      <div class="helper-text">We'll never share your email.</div>
-
-      <label for="password">Password <span style="color:#ff6347">*</span></label>
-      <input type="password" id="password" placeholder="Enter your password" required />
-
-      <button type="submit">Login & Continue</button>
-    </form>
-  </div>
-
-  <!-- Step 2: Ingredient Selection -->
-  <div id="screen2" class="screen">
-    <h2>🧺 Select Ingredients</h2>
-    <p><strong>Welcome, <span id="userNameDisplay"></span>! Please select your ingredients:</strong></p>
+<main>
+  <section>
+    <h2>🧺 Select Ingredients (Veg & Non-Veg)</h2>
     <div class="items" id="ingredient-list"></div>
-    <button onclick="goToCookingSelection()">Next: Choose Cooking Ingredients</button>
-  </div>
+  </section>
 
-  <!-- Step 3: Cooking Selection & Recipe Display -->
-  <div id="screen3" class="screen">
-    <h2>👩‍🍳 Choose Ingredients for Cooking</h2>
-    <p><strong><span id="userNameDisplay2"></span>, select the ingredients you want to cook with:</strong></p>
-    <div class="items" id="final-selection"></div>
+  <div style="text-align:center;">
     <button onclick="makeRecipe()">Make Recipe</button>
-
-    <div id="output" style="display:none;">
-      <h3>Your Custom Recipe 🍴</h3>
-      <p id="recipeText"></p>
-
-      <h3>👩‍🍳 How to Make It:</h3>
-      <ol id="processSteps"></ol>
-
-      <div id="extraRecipe" class="extra"></div>
-    </div>
   </div>
-</div>
+
+  <div id="output">
+    <h3>Your Custom Recipe 🍴</h3>
+    <p id="recipeText"></p>
+
+    <h3>👩‍🍳 How to Make It:</h3>
+    <ol id="processSteps"></ol>
+
+    <div id="extraRecipe" class="extra"></div>
+  </div>
+</main>
 
 <script>
-  // Ingredient list (A–Z)
   const ingredients = [
     "Beef", "Broccoli", "Butter", "Cabbage", "Capsicum", "Carrot", "Cauliflower", 
     "Cheese", "Chicken", "Chili", "Coconut", "Coriander", "Corn", "Cucumber", 
@@ -201,7 +171,6 @@
     "Turmeric", "Yogurt"
   ].sort();
 
-  // Suggested extra recipes
   const extraRecipeSuggestions = {
     Chicken: "Try <b>Butter Chicken</b> or <b>Chicken Biryani</b> next time!",
     Fish: "How about a <b>Fish Fry</b> or <b>Fish Curry</b> for your next meal?",
@@ -213,7 +182,6 @@
     Rice: "Pair it with <b>Veg Fried Rice</b> or <b>Chicken Pulao</b>!"
   };
 
-  // Unique process steps for each major recipe
   const recipeProcesses = {
     Chicken: [
       "Marinate chicken with yogurt, chili powder, turmeric, and salt for 30 minutes.",
@@ -259,90 +227,30 @@
     ]
   };
 
-  // Global user variables
-  let userName = "";
-  let userEmail = "";
-  let selectedIngredients = [];
+  const container = document.getElementById("ingredient-list");
+  ingredients.forEach(item => {
+    const label = document.createElement("label");
+    label.innerHTML = `<input type="checkbox" value="${item}"> ${item}`;
+    container.appendChild(label);
+  });
 
-  // Step 1: Login validation and move to Step 2
-  function loginUser() {
-    const nameInput = document.getElementById("name").value.trim();
-    const emailInput = document.getElementById("email").value.trim();
-    const passInput = document.getElementById("password").value.trim();
-
-    if (!nameInput || !emailInput || !passInput) {
-      alert("Please fill in all the fields.");
-      return;
-    }
-
-    // Simple email format check
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(emailInput)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
-
-    // For demo, we don't verify password strength or server auth
-
-    userName = nameInput;
-    userEmail = emailInput;
-
-    document.getElementById("userNameDisplay").innerText = userName;
-    document.getElementById("userNameDisplay2").innerText = userName;
-
-    // Populate ingredient list
-    const ingredientList = document.getElementById("ingredient-list");
-    ingredientList.innerHTML = "";
-    ingredients.forEach(item => {
-      const label = document.createElement("label");
-      label.innerHTML = `<input type="checkbox" value="${item}"> ${item}`;
-      ingredientList.appendChild(label);
-    });
-
-    // Switch screens
-    document.getElementById("screen1").classList.remove("active");
-    document.getElementById("screen2").classList.add("active");
-  }
-
-  // Step 2 to Step 3: Collect selected ingredients from step 2
-  function goToCookingSelection() {
-    const checked = document.querySelectorAll('#ingredient-list input:checked');
-    if (checked.length === 0) {
-      alert("Please select at least one ingredient.");
-      return;
-    }
-    selectedIngredients = Array.from(checked).map(cb => cb.value);
-
-    // Show these ingredients for final cooking selection
-    const finalContainer = document.getElementById("final-selection");
-    finalContainer.innerHTML = "";
-    selectedIngredients.forEach(item => {
-      const label = document.createElement("label");
-      label.innerHTML = `<input type="checkbox" value="${item}" checked> ${item}`;
-      finalContainer.appendChild(label);
-    });
-
-    // Switch screens
-    document.getElementById("screen2").classList.remove("active");
-    document.getElementById("screen3").classList.add("active");
-  }
-
-  // Step 3: Generate recipe based on selected cooking ingredients
   function makeRecipe() {
-    const checked = document.querySelectorAll('#final-selection input:checked');
-    const cookingItems = Array.from(checked).map(cb => cb.value);
-    if (cookingItems.length === 0) {
-      alert("Please select at least one ingredient to cook with.");
-      return;
-    }
-
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    const selectedItems = Array.from(checked).map(cb => cb.value);
     const output = document.getElementById("output");
     const recipeText = document.getElementById("recipeText");
     const processSteps = document.getElementById("processSteps");
     const extraRecipe = document.getElementById("extraRecipe");
 
-    // Determine main ingredient or default to Veg
-    const mainIngredient = cookingItems.find(i =>
+    if (selectedItems.length === 0) {
+      output.style.display = "block";
+      recipeText.innerHTML = "❗Please select at least one ingredient to create a recipe.";
+      processSteps.innerHTML = "";
+      extraRecipe.innerHTML = "";
+      return;
+    }
+
+    const mainIngredient = selectedItems.find(i =>
       ["Chicken", "Fish", "Paneer", "Egg", "Mutton"].includes(i)
     ) || "Veg";
 
@@ -357,7 +265,7 @@
 
     recipeText.innerHTML = `
       <strong>${nameMap[mainIngredient]}</strong><br><br>
-      <b>Ingredients:</b> ${cookingItems.join(", ")}.
+      <b>Ingredients:</b> ${selectedItems.join(", ")}.
     `;
 
     const steps = recipeProcesses[mainIngredient];
@@ -372,6 +280,5 @@
     output.scrollIntoView({ behavior: "smooth" });
   }
 </script>
-
 </body>
 </html>
